@@ -1,9 +1,12 @@
-package com.alienvault.threatscanner;
+package com.alienvault.threatscanner.application;
 
 import android.app.Application;
 import android.content.Context;
+
+import com.alienvault.threatscanner.BuildConfig;
 import com.facebook.stetho.Stetho;
 import com.firebase.client.Firebase;
+
 import timber.log.Timber;
 
 /**
