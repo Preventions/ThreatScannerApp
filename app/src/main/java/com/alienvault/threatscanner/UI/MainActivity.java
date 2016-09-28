@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.alienvault.threatscanner.R;
 import com.alienvault.threatscanner.model.IpAddress;
+import com.alienvault.threatscanner.model.OTXResults;
 import com.alienvault.threatscanner.network.FetchIpAddress;
 import com.alienvault.threatscanner.network.QueryOTX;
 import com.alienvault.threatscanner.utility.Utility;
@@ -29,6 +30,16 @@ public class MainActivity extends AppCompatActivity {
         // make network call to query OTX
         QueryOTX queryOTX = new QueryOTX();
         queryOTX.execute(ipAddress.getIpAddress());
+    }
+
+    public static void setOtxResponse(OTXResults otxResults) {
+        // update the TextView with the OTX response
+
+        String response;
+
+        response = "Scanning Host: " + otxResults.getScanningHost() + " | " + "Malware Domain: " + otxResults.getMalwareDomain();
+        Timber.v(response);
+        textView.setText(response);
     }
 
     @Override

@@ -16,6 +16,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        buildTypes.each {
+            it.buildConfigField 'String', 'OTX_API_KEY', OTX_API_KEY
+        }
     }
     packagingOptions {
         exclude 'META-INF/LICENSE'

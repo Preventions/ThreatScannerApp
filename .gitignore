@@ -40,3 +40,5 @@ project.properties
 build/
 app/libs/
 app/src/main/res/drawable/
+app/src/main/java/com/alienvault/threatscanner/model/
+app/src/main/java/com/alienvault/threatscanner/network/
