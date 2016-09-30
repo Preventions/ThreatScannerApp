@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "548030046482",
+    "firebase_url": "https://threatscannerapp.firebaseio.com",
+    "project_id": "threatscannerapp",
+    "storage_bucket": "threatscannerapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:548030046482:android:6da874cf4be7878c",
+        "android_client_info": {
+          "package_name": "com.alienvault.threatscanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "548030046482-3bktpedgbb3p6hfa5pces73sru2uf0n6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alienvault.threatscanner",
+            "certificate_hash": "3CA896814DE572B1096FA8A0201D6E6BFAA4826D"
+          }
+        },
+        {
+          "client_id": "548030046482-7kbhq8op615k33s6724dihfuvi58bhb4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-RFmhqZwpEtGPSHa129h-4BambIqth0U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "548030046482-7kbhq8op615k33s6724dihfuvi58bhb4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
