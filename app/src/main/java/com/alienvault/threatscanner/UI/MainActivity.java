@@ -32,28 +32,23 @@ import timber.log.Timber;
 public class MainActivity extends AppCompatActivity {
 
     private static final int NOTIFICATION_ID = 999;
-    public static TextView textView;
+    private static TextView threatScore;
+    private static TextView ipAddress;
+    private static TextView otxResponse;
     private FirebaseAnalytics mFirebaseAnalytics;
     private String webcastName;
     private String webcastURL;
 
-
-    public static void setIpAddress(IpAddress ipAddress) {
-        // update the TextView with the device's IP Address
-        textView.setText(ipAddress.getIpAddress());
-
-        // make network call to query OTX
-        QueryOTX queryOTX = new QueryOTX();
-        queryOTX.execute(ipAddress.getIpAddress());
-    }
-
     public static void setOtxResponse(OTXResults otxResults) {
 
-        String response;
-
-        response = "Scanning Host: " + otxResults.getScanningHost() + " | " + "Malware Domain: " + otxResults.getMalwareDomain();
+        String response = "Scanning Host: " + otxResults.getScanningHost() + "\n" + "Malware Domain: " + otxResults.getMalwareDomain();
+        // TODO make this clickable so that it points back to OTX
         Timber.v(response);
-        textView.setText(response); // update the TextView with the OTX response
+        Timber.v(otxResults.getThreatScore());
+
+        threatScore.setText(otxResults.getThreatScore());
+        ipAddress.setText("69.73.130.198");
+        otxResponse.setText(response); // update the TextView with the OTX response
 
         // see https://github.com/hbaxamoosa/HelpWanted/blob/master/app/src/main/java/com/baxamoosa/helpwanted/sync/HelpWantedSyncAdapter.java for reference
         if (response != null) {
@@ -85,6 +80,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void setIpAddress(IpAddress ipAddress) {
+        // update the TextView with the device's IP Address
+        otxResponse.setText(ipAddress.getIpAddress());
+
+        // make network call to query OTX
+        QueryOTX queryOTX = new QueryOTX();
+        queryOTX.execute(ipAddress.getIpAddress());
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,9 +97,13 @@ public class MainActivity extends AppCompatActivity {
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main); // switch the TextView for a CardView so that it shows a historical audit trail
 
-        textView = (TextView) findViewById(R.id.content);
+        // consider adding intro screens to the app - https://medium.com/tangoagency/material-intro-screen-for-android-apps-c4317fbac923#.1zp72ni98
+
+        ipAddress = (TextView) findViewById(R.id.ip_address);
+        otxResponse = (TextView) findViewById(R.id.otx_response);
+        threatScore = (TextView) findViewById(R.id.threat_score);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -103,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
         String token = FirebaseInstanceId.getInstance().getToken();
         Timber.v(token);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        // TODO implement notification for user, so that the check doesn't have to be triggered via button click
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,7 +128,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // check to see if app was launched from GCM notification
+        // TODO include an intent extra to identify that the notification click came from FCM or from the app itself
+        // see https://github.com/firebase/quickstart-android/tree/master/messaging for reference
+        // if app was launched from notification, it will have an intent
         Intent intent = getIntent();
 
         if (intent != null) {
@@ -127,15 +139,10 @@ public class MainActivity extends AppCompatActivity {
             if (intent.hasExtra("name")) {
                 webcastName = extras.getString("name");
                 webcastURL = extras.getString("url");
-                textView.setText("Come join AlienVault for " + webcastName + " " + webcastURL.toString() + ".");
+                otxResponse.setText("Come join AlienVault for " + webcastName + " " + webcastURL.toString() + ".");
             }
         }
     }
-
-    // TODO implement notification for user, so that the check doesn't have to be triggered via button click
-
-    // TODO include Firebase Cloud Messaging (FCM) to be able to send notifications to users
-    // see https://github.com/firebase/quickstart-android/tree/master/messaging for reference
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -155,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
