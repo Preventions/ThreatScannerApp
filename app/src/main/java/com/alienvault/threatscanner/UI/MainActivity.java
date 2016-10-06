@@ -1,16 +1,12 @@
 package com.alienvault.threatscanner.ui;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ContentResolver;
-import android.content.Context;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +20,6 @@ import com.alienvault.threatscanner.R;
 import com.alienvault.threatscanner.adapter.OTXResponsesAdapter;
 import com.alienvault.threatscanner.application.ThreatScanner;
 import com.alienvault.threatscanner.data.OTXResponsesContract;
-import com.alienvault.threatscanner.model.OTXResults;
 import com.alienvault.threatscanner.network.FetchIpAddress;
 import com.alienvault.threatscanner.utility.Utility;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -34,57 +29,14 @@ import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int NOTIFICATION_ID = 999;
-    private static TextView threatScore;
-    private static TextView ipAddress;
-    private static TextView otxResponse;
+    public static RecyclerView mRecyclerView;
+    public static OTXResponsesAdapter mAdapter;
+    private TextView threatScore;
+    private TextView ipAddress;
+    private TextView otxResponse;
     private FirebaseAnalytics mFirebaseAnalytics;
-    private String webcastName;
-    private String webcastURL;
-    private RecyclerView mRecyclerView;
-    private OTXResponsesAdapter mAdapter;
+    private String notificationType;
     private RecyclerView.LayoutManager mLayoutManager;
-
-    public static void setOtxResponse(OTXResults otxResults) {
-
-        String response = "Scanning Host: " + otxResults.getScanningHost() + "\n" + "Malware Domain: " + otxResults.getMalwareDomain();
-        // TODO make this clickable so that it points back to OTX
-        Timber.v(response);
-        Timber.v(otxResults.getThreatScore());
-
-        threatScore.setText(otxResults.getThreatScore());
-        ipAddress.setText("69.73.130.198");
-        otxResponse.setText(response); // update the TextView with the OTX response
-
-        // see https://github.com/hbaxamoosa/HelpWanted/blob/master/app/src/main/java/com/baxamoosa/helpwanted/sync/HelpWantedSyncAdapter.java for reference
-        if (response != null) {
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(ThreatScanner.getAppContext())
-                            .setSmallIcon(R.drawable.alienhead)
-                            .setContentTitle("AlienVault OTX warnings")
-                            .setContentText("AlienVault OTX found malicious activity on this IP address!");
-            // Creates an explicit intent for an Activity in your app
-            Intent resultIntent = new Intent(ThreatScanner.getAppContext(), MainActivity.class);
-
-            // The stack builder object will contain an artificial back stack for the started Activity.
-            // This ensures that navigating backward from the Activity leads out of your application to the Home screen.
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(ThreatScanner.getAppContext());
-            // Adds the back stack for the Intent (but not the Intent itself)
-            stackBuilder.addParentStack(MainActivity.class);
-            // Adds the Intent that starts the Activity to the top of the stack
-            stackBuilder.addNextIntent(resultIntent);
-            PendingIntent resultPendingIntent =
-                    stackBuilder.getPendingIntent(
-                            0,
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                    );
-            mBuilder.setContentIntent(resultPendingIntent);
-            NotificationManager mNotificationManager =
-                    (NotificationManager) ThreatScanner.getAppContext().getSystemService(Context.NOTIFICATION_SERVICE);
-            // NOTIFICATION_ID allows you to update the notification later on.
-            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,11 +86,41 @@ public class MainActivity extends AppCompatActivity {
             Timber.v("intent != null");
             Bundle extras = intent.getExtras();
             if (extras != null) { // intent has extras
-                if (extras.get("type").equals("firebase")) {
-                    webcastName = extras.getString("name");
-                    webcastURL = extras.getString("url");
-                    otxResponse.setText("Come join AlienVault for " + webcastName + " " + webcastURL.toString() + ".");
+                notificationType = extras.getString("type");
+                Timber.v("notificationType: " + notificationType);
+                if (notificationType.equals("firebase")) {
+
+                    Timber.v("type: " + extras.getString("type"));
+                    Timber.v("name: " + extras.getString("name"));
+                    Timber.v("url: " + extras.getString("url"));
+
+                    // insert values into ContentProvider
+                    ContentValues OTXResponse = new ContentValues();
+                    OTXResponse.put(OTXResponsesContract.OTXResponsesList.COLUMN_THREAT_SCORE, "N/A");
+                    OTXResponse.put(OTXResponsesContract.OTXResponsesList.COLUMN_IP_ADDRESS, "Webcast");
+                    OTXResponse.put(OTXResponsesContract.OTXResponsesList.COLUMN_OTX_RESPONSE, extras.getString("name"));
+                    OTXResponse.put(OTXResponsesContract.OTXResponsesList.COLUMN_URL, extras.getString("url"));
+                    OTXResponse.put(OTXResponsesContract.OTXResponsesList.COLUMN_TYPE, "FCM");
+                    ThreatScanner.getAppContext().getContentResolver().insert(OTXResponsesContract.OTXResponsesList.CONTENT_URI, OTXResponse);
+
+                    // since a new item has been added, create a new Cursor
+                    ContentResolver mResolver = ThreatScanner.getAppContext().getContentResolver();
+                    String selection = null;
+                    String[] selectionArgs = null;
+
+                    // create cursor to read OTXResponses stored in the DB
+                    Cursor mCursor = mResolver.query(OTXResponsesContract.OTXResponsesList.CONTENT_URI, Utility.OTXRESPONSES_COLUMNS, selection, selectionArgs, null);
+
+                    if (mCursor != null) {
+                        Timber.v("mCursor.getCount: " + mCursor.getCount());
+                        mCursor.moveToFirst();
+                    }
+
+                    // swap the adapter for the RecyclerView
+                    MainActivity.mRecyclerView.swapAdapter(new OTXResponsesAdapter(ThreatScanner.getAppContext(), mCursor), false);
                 }
+            } else {
+                Timber.v("extras == null");
             }
         }
 
@@ -154,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             mCursor.moveToFirst();
         }
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview); // good reference here: https://github.com/codepath/android_guides/wiki/Using-the-RecyclerView
 
         // use this setting to improve performance if you know that changes in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);

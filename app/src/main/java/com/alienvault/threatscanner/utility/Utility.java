@@ -14,14 +14,18 @@ import timber.log.Timber;
 
 public class Utility {
 
-    // These indices are tied to OTXRESPONSES_COLUMNS.  If JOBPOST_COLUMNS changes, these must change.
-    public static final int COL_ID = 0;
+    // These indices are tied to OTXRESPONSES_COLUMNS.  If OTXRESPONSES_COLUMNS changes, these must change.
+    public static final int COLUMN_THREAT_SCORE = 0;
     public static final int COLUMN_IP_ADDRESS = 1;
     public static final int COLUMN_OTX_RESPONSE = 2;
+    public static final int COLUMN_URL = 3;
+    public static final int COLUMN_TYPE = 4;
     public static final String[] OTXRESPONSES_COLUMNS = {
-            OTXResponsesContract.OTXResponsesList.COLUMN_ID,
+            OTXResponsesContract.OTXResponsesList.COLUMN_THREAT_SCORE,
             OTXResponsesContract.OTXResponsesList.COLUMN_IP_ADDRESS,
-            OTXResponsesContract.OTXResponsesList.COLUMN_OTX_RESPONSE
+            OTXResponsesContract.OTXResponsesList.COLUMN_OTX_RESPONSE,
+            OTXResponsesContract.OTXResponsesList.COLUMN_URL,
+            OTXResponsesContract.OTXResponsesList.COLUMN_TYPE
     };
 
     /**

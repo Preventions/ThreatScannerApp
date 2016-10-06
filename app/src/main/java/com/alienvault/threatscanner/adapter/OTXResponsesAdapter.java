@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alienvault.threatscanner.R;
 import com.alienvault.threatscanner.utility.Utility;
@@ -25,7 +24,7 @@ import timber.log.Timber;
 public class OTXResponsesAdapter extends RecyclerView.Adapter<OTXResponsesAdapter.OTXResponsesAdapterViewHolder> {
 
     private static Context mContext;
-    private Cursor mCursor;
+    private static Cursor mCursor;
 
     public OTXResponsesAdapter(Context context, Cursor cursor) {
         super();
@@ -41,12 +40,11 @@ public class OTXResponsesAdapter extends RecyclerView.Adapter<OTXResponsesAdapte
 
     @Override
     public void onBindViewHolder(OTXResponsesAdapter.OTXResponsesAdapterViewHolder holder, int position) {
-        Timber.v("onBindViewHolder(OTXResponsesAdapter.OTXResponsesAdapterViewHolder holder, int position)");
+        // Timber.v("onBindViewHolder(OTXResponsesAdapter.OTXResponsesAdapterViewHolder holder, int position)");
 
-        for (int i = 0; i < mCursor.getCount(); i++) {
-            Timber.v("i = " + i);
-
-            holder.mThreatScore.setText(mCursor.getString(Utility.COL_ID));
+        if (mCursor.move(position)) {
+            Timber.v("mCursor position: " + position);
+            holder.mThreatScore.setText(mCursor.getString(Utility.COLUMN_THREAT_SCORE));
             holder.mIpAddress.setText(mCursor.getString(Utility.COLUMN_IP_ADDRESS));
             holder.mOtxResponse.setText(mCursor.getString(Utility.COLUMN_OTX_RESPONSE));
         }
@@ -54,9 +52,9 @@ public class OTXResponsesAdapter extends RecyclerView.Adapter<OTXResponsesAdapte
 
     @Override
     public int getItemCount() {
-        if (mCursor != null) {
+        /*if (mCursor != null) {
             Timber.v("getItemCount(): " + mCursor.getCount());
-        }
+        }*/
         return (null != mCursor ? mCursor.getCount() : 0);
     }
 
@@ -76,12 +74,17 @@ public class OTXResponsesAdapter extends RecyclerView.Adapter<OTXResponsesAdapte
 
         @Override
         public void onClick(View v) {
-            Timber.v("onClick(View v) inside OTXResponsesAdapterViewHolder");
+            // Timber.v("onClick(View v) inside OTXResponsesAdapterViewHolder");
             int adapterPosition = getAdapterPosition();
-            int layoutPosition = getLayoutPosition();
-            Toast.makeText(mContext, "click on CardView", Toast.LENGTH_SHORT).show();
+            // int layoutPosition = getLayoutPosition();
 
-            String url = "https://otx.alienvault.com/indicator/ip/69.73.130.198/";
+            // String url = "https://otx.alienvault.com/indicator/ip/69.73.130.198/";
+
+            Timber.v("adapterPosition: " + adapterPosition);
+            mCursor.moveToFirst();
+            mCursor.move(adapterPosition);
+            String url = mCursor.getString(Utility.COLUMN_URL);
+            Timber.v("url: " + url);
 
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(url));
