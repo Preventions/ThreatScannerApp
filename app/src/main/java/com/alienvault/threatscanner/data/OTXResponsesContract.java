@@ -37,6 +37,7 @@ public class OTXResponsesContract {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_OTXRESPONSES).build();
 
         // Columns for responses table
+        public static final String COLUMN_ID = "id";
         public static final String COLUMN_THREAT_SCORE = "threat_score";
         public static final String COLUMN_IP_ADDRESS = "ip_address";
         public static final String COLUMN_OTX_RESPONSE = "otx_response";
