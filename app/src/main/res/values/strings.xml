@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Threat Scanner</string>
     <string name="action_settings">Settings</string>
+
+    <!-- For Content Provider -->
+    <string name="content_authority">com.alienvault.threatscanner</string>
 </resources>

@@ -2,15 +2,18 @@ package com.alienvault.threatscanner.ui;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,11 +21,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.alienvault.threatscanner.R;
+import com.alienvault.threatscanner.adapter.OTXResponsesAdapter;
 import com.alienvault.threatscanner.application.ThreatScanner;
-import com.alienvault.threatscanner.model.IpAddress;
+import com.alienvault.threatscanner.data.OTXResponsesContract;
 import com.alienvault.threatscanner.model.OTXResults;
 import com.alienvault.threatscanner.network.FetchIpAddress;
-import com.alienvault.threatscanner.network.QueryOTX;
 import com.alienvault.threatscanner.utility.Utility;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -38,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAnalytics mFirebaseAnalytics;
     private String webcastName;
     private String webcastURL;
+    private RecyclerView mRecyclerView;
+    private OTXResponsesAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     public static void setOtxResponse(OTXResults otxResults) {
 
@@ -54,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         if (response != null) {
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(ThreatScanner.getAppContext())
-                            .setSmallIcon(R.drawable.alienvault)
+                            .setSmallIcon(R.drawable.alienhead)
                             .setContentTitle("AlienVault OTX warnings")
                             .setContentText("AlienVault OTX found malicious activity on this IP address!");
             // Creates an explicit intent for an Activity in your app
@@ -78,15 +84,6 @@ public class MainActivity extends AppCompatActivity {
             // NOTIFICATION_ID allows you to update the notification later on.
             mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
         }
-    }
-
-    public void setIpAddress(IpAddress ipAddress) {
-        // update the TextView with the device's IP Address
-        otxResponse.setText(ipAddress.getIpAddress());
-
-        // make network call to query OTX
-        QueryOTX queryOTX = new QueryOTX();
-        queryOTX.execute(ipAddress.getIpAddress());
     }
 
     @Override
@@ -130,18 +127,45 @@ public class MainActivity extends AppCompatActivity {
 
         // TODO include an intent extra to identify that the notification click came from FCM or from the app itself
         // see https://github.com/firebase/quickstart-android/tree/master/messaging for reference
-        // if app was launched from notification, it will have an intent
+        // if app was launched from notification, it will have an intent with extra of type:firebase
         Intent intent = getIntent();
 
         if (intent != null) {
             Timber.v("intent != null");
             Bundle extras = intent.getExtras();
-            if (intent.hasExtra("name")) {
-                webcastName = extras.getString("name");
-                webcastURL = extras.getString("url");
-                otxResponse.setText("Come join AlienVault for " + webcastName + " " + webcastURL.toString() + ".");
+            if (extras != null) { // intent has extras
+                if (extras.get("type").equals("firebase")) {
+                    webcastName = extras.getString("name");
+                    webcastURL = extras.getString("url");
+                    otxResponse.setText("Come join AlienVault for " + webcastName + " " + webcastURL.toString() + ".");
+                }
             }
         }
+
+        ContentResolver mResolver = getContentResolver();
+        String selection = null;
+        String[] selectionArgs = null;
+
+        // create cursor to read OTXResponses stored in the DB
+        Cursor mCursor = mResolver.query(OTXResponsesContract.OTXResponsesList.CONTENT_URI, Utility.OTXRESPONSES_COLUMNS, selection, selectionArgs, null);
+
+        if (mCursor != null) {
+            Timber.v("mCursor.getCount: " + mCursor.getCount());
+            mCursor.moveToFirst();
+        }
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+
+        // use this setting to improve performance if you know that changes in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specify an OTXResponsesAdapter
+        mAdapter = new OTXResponsesAdapter(this, mCursor);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -163,11 +187,5 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void onClick(View v) {
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(webcastURL));
-        startActivity(i);
     }
 }

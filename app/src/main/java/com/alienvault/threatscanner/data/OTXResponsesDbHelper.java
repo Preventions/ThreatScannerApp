@@ -31,7 +31,7 @@ public class OTXResponsesDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_OTXRESPONSES_TABLE = "CREATE TABLE " + OTXResponsesContract.OTXResponsesList.TABLE_NAME + " (" +
                 OTXResponsesContract.OTXResponsesList.COLUMN_ID + " INTEGER PRIMARY KEY," +
                 OTXResponsesContract.OTXResponsesList.COLUMN_IP_ADDRESS + " TEXT NOT NULL, " +
-                OTXResponsesContract.OTXResponsesList.COLUMN_OTX_RESPONSE + " TEXT NOT NULL, " +
+                OTXResponsesContract.OTXResponsesList.COLUMN_OTX_RESPONSE + " TEXT NOT NULL" +
                 " );";
 
         Timber.v("SQL_CREATE_OTXRESPONSES_TABLE is " + SQL_CREATE_OTXRESPONSES_TABLE);

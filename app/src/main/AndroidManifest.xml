@@ -25,6 +25,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name=".data.OTXResponsesProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false"
+            android:syncable="true" />
     </application>
 
     <service android:name=".MyFirebaseMessagingService">
