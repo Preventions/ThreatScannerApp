@@ -40,14 +40,11 @@ public class OTXResponsesAdapter extends RecyclerView.Adapter<OTXResponsesAdapte
 
     @Override
     public void onBindViewHolder(OTXResponsesAdapter.OTXResponsesAdapterViewHolder holder, int position) {
-        // Timber.v("onBindViewHolder(OTXResponsesAdapter.OTXResponsesAdapterViewHolder holder, int position)");
-
-        if (mCursor.move(position)) {
-            Timber.v("mCursor position: " + position);
-            holder.mThreatScore.setText(mCursor.getString(Utility.COLUMN_THREAT_SCORE));
-            holder.mIpAddress.setText(mCursor.getString(Utility.COLUMN_IP_ADDRESS));
-            holder.mOtxResponse.setText(mCursor.getString(Utility.COLUMN_OTX_RESPONSE));
-        }
+        Timber.v("mCursor position: " + position);
+        mCursor.moveToPosition(position);
+        holder.mThreatScore.setText(mCursor.getString(Utility.COLUMN_THREAT_SCORE));
+        holder.mIpAddress.setText(mCursor.getString(Utility.COLUMN_IP_ADDRESS));
+        holder.mOtxResponse.setText(mCursor.getString(Utility.COLUMN_OTX_RESPONSE));
     }
 
     @Override

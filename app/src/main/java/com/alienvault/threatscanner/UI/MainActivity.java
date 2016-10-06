@@ -14,7 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.alienvault.threatscanner.R;
 import com.alienvault.threatscanner.adapter.OTXResponsesAdapter;
@@ -31,12 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static RecyclerView mRecyclerView;
     public static OTXResponsesAdapter mAdapter;
-    private TextView threatScore;
-    private TextView ipAddress;
-    private TextView otxResponse;
     private FirebaseAnalytics mFirebaseAnalytics;
     private String notificationType;
     private RecyclerView.LayoutManager mLayoutManager;
+    private ContentResolver mContentResolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +46,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main); // switch the TextView for a CardView so that it shows a historical audit trail
 
         // consider adding intro screens to the app - https://medium.com/tangoagency/material-intro-screen-for-android-apps-c4317fbac923#.1zp72ni98
-
-        ipAddress = (TextView) findViewById(R.id.ip_address);
-        otxResponse = (TextView) findViewById(R.id.otx_response);
-        threatScore = (TextView) findViewById(R.id.threat_score);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -88,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             if (extras != null) { // intent has extras
                 notificationType = extras.getString("type");
                 Timber.v("notificationType: " + notificationType);
-                if (notificationType.equals("firebase")) {
+                if (notificationType != null && notificationType.equals("firebase")) {
 
                     Timber.v("type: " + extras.getString("type"));
                     Timber.v("name: " + extras.getString("name"));
@@ -101,15 +94,16 @@ public class MainActivity extends AppCompatActivity {
                     OTXResponse.put(OTXResponsesContract.OTXResponsesList.COLUMN_OTX_RESPONSE, extras.getString("name"));
                     OTXResponse.put(OTXResponsesContract.OTXResponsesList.COLUMN_URL, extras.getString("url"));
                     OTXResponse.put(OTXResponsesContract.OTXResponsesList.COLUMN_TYPE, "FCM");
-                    ThreatScanner.getAppContext().getContentResolver().insert(OTXResponsesContract.OTXResponsesList.CONTENT_URI, OTXResponse);
 
+                    mContentResolver = this.getContentResolver();
+
+                    mContentResolver.insert(OTXResponsesContract.OTXResponsesList.CONTENT_URI, OTXResponse);
                     // since a new item has been added, create a new Cursor
-                    ContentResolver mResolver = ThreatScanner.getAppContext().getContentResolver();
                     String selection = null;
                     String[] selectionArgs = null;
 
                     // create cursor to read OTXResponses stored in the DB
-                    Cursor mCursor = mResolver.query(OTXResponsesContract.OTXResponsesList.CONTENT_URI, Utility.OTXRESPONSES_COLUMNS, selection, selectionArgs, null);
+                    Cursor mCursor = mContentResolver.query(OTXResponsesContract.OTXResponsesList.CONTENT_URI, Utility.OTXRESPONSES_COLUMNS, selection, selectionArgs, null);
 
                     if (mCursor != null) {
                         Timber.v("mCursor.getCount: " + mCursor.getCount());
