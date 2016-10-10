@@ -30,6 +30,18 @@
             android:authorities="@string/content_authority"
             android:exported="false"
             android:syncable="true" />
+        <receiver
+            android:name=".broadcastreceiver.NetworkChangeReceiver"
+            android:label="NetworkChangeReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".service.OtxQueryService"
+            android:icon="@drawable/alienhead"
+            android:label="@string/service_name"></service>
     </application>
 
     <service android:name=".MyFirebaseMessagingService">

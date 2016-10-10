@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.alienvault.threatscanner.R;
 import com.alienvault.threatscanner.adapter.OTXResponsesAdapter;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                     FetchIpAddress fetchIpAddress = new FetchIpAddress();
                     fetchIpAddress.execute();
                 } else {
+                    Toast.makeText(getApplicationContext(), "Not connected to Wifi", Toast.LENGTH_SHORT).show();
                     Timber.v("not connected to wifi");
                 }
             }
@@ -118,12 +120,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        // clear the intent so that rotation or triggering of the app from the 'recents'
+        // menu doesn't add repeated notifications from FCM
+        intent.replaceExtras(new Bundle());
+        intent.setAction("");
+        intent.setData(null);
+        intent.setFlags(0);
+
         ContentResolver mResolver = getContentResolver();
         String selection = null;
         String[] selectionArgs = null;
 
         // create cursor to read OTXResponses stored in the DB
-        Cursor mCursor = mResolver.query(OTXResponsesContract.OTXResponsesList.CONTENT_URI, Utility.OTXRESPONSES_COLUMNS, selection, selectionArgs, null);
+        Cursor mCursor = mResolver.query(OTXResponsesContract.OTXResponsesList.CONTENT_URI, Utility.OTXRESPONSES_COLUMNS, selection, selectionArgs, " id DESC");
 
         if (mCursor != null) {
             Timber.v("mCursor.getCount: " + mCursor.getCount());
