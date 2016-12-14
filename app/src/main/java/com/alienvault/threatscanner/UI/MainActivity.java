@@ -1,12 +1,14 @@
 package com.alienvault.threatscanner.ui;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,12 +24,15 @@ import com.alienvault.threatscanner.application.ThreatScanner;
 import com.alienvault.threatscanner.data.OTXResponsesContract;
 import com.alienvault.threatscanner.network.FetchIpAddress;
 import com.alienvault.threatscanner.utility.Utility;
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
+
+    /**
+     * Nougat 7.1 static shortcut: https://medium.com/@tonyowen/android-7-1-static-shortcut-6c42d81ba11b#.ym8uchowc
+     * and https://www.novoda.com/blog/exploring-android-nougat-7-1-app-shortcuts/
+     */
 
     public static RecyclerView mRecyclerView;
     public static OTXResponsesAdapter mAdapter;
@@ -39,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Timber.v("kicking this off!");
 
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -60,9 +64,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (Utility.isNetworkAvailable(getApplicationContext())) {
-                    Timber.v("network is available");
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    Timber.v("calling network task");
+                    // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Timber.v("calling fetchIpAddress.execute()");
                     FetchIpAddress fetchIpAddress = new FetchIpAddress();
                     fetchIpAddress.execute();
                 } else {
@@ -72,11 +75,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // TODO include an intent extra to identify that the notification click came from FCM or from the app itself
-        // see https://github.com/firebase/quickstart-android/tree/master/messaging for reference
-        // if app was launched from notification, it will have an intent with extra of type:firebase
+        /**
+         * see https://github.com/firebase/quickstart-android/tree/master/messaging for reference
+         * if app was launched from notification, it will have an intent with extra of type:firebase
+         */
         Intent intent = getIntent();
 
+        /**
+         * good info on notifications here: http://firstround.com/review/what-you-must-know-to-build-savvy-push-notifications/
+         */
         if (intent != null) {
             Timber.v("intent != null");
             Bundle extras = intent.getExtras();
@@ -120,8 +127,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // clear the intent so that rotation or triggering of the app from the 'recents'
-        // menu doesn't add repeated notifications from FCM
+        /**
+         * clear the intent so that rotation or triggering of the app from the 'recents' menu doesn't add repeated notifications from FCM
+         */
         intent.replaceExtras(new Bundle());
         intent.setAction("");
         intent.setData(null);

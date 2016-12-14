@@ -34,6 +34,13 @@ public class Utility {
     public static int TYPE_MOBILE = 2;
     public static int TYPE_NOT_CONNECTED = 0;
 
+    /**
+     * Force non-instantiability: If you do not want an object to be created using the new keyword,
+     * enforce it using a private constructor. Especially useful for utility classes that contain
+     * only static functions.
+     */
+    private Utility() {
+    }
 
     public static int getConnectivityStatus(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context
@@ -69,19 +76,19 @@ public class Utility {
      * @param c Context used to get the ConnectivityManager
      * @return true if the network is available
      */
-    public static boolean isNetworkAvailable(Context c) {
+    public static boolean isNetworkAvailable(Context context) {
 
         /*if (BuildConfig.DEBUG) {
             Timber.v("isNetworkAvailable(Context c)");
         }*/
 
-        ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo ni = cm.getActiveNetworkInfo();
         // make sure this is checking for TYPE_WIFI
-        if (ni != null && ni.getType() == ConnectivityManager.TYPE_WIFI) {
+        if (ni != null && ni.getType() == ConnectivityManager.TYPE_MOBILE) {
             Timber.v(ni.getExtraInfo());
-            Timber.v("on wifi");
+            // Timber.v("on wifi");
             return true;
         }
         return false;
