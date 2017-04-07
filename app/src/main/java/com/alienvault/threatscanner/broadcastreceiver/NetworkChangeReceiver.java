@@ -26,6 +26,8 @@ import com.alienvault.threatscanner.utility.Utility;
  * documentation for all the details: https://goo.gl/37QRQz
  */
 
+// // TODO: 4/6/17 see https://github.com/firebase/firebase-jobdispatcher-android
+
 public class NetworkChangeReceiver extends BroadcastReceiver {
 
     @Override

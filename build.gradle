@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:2.3.1'
         classpath 'com.google.gms:google-services:3.0.0'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -24,7 +24,7 @@ allprojects {
         myMinSdkVersion = 15 //Integer
         myTargetSdkVersion = 25
         myCompileSdkVersion = 25
-        myAndroidSupportLibraryVersion = "25.1.0"
+        myAndroidSupportLibraryVersion = "25.3.1"
         myFirebaseClientAndroidVersion = "2.5.2"
         myFirebaseLibraryVersion = "9.6.1"
     }
