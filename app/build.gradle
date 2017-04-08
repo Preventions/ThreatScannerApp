@@ -41,6 +41,7 @@ dependencies {
     compile "com.firebase:firebase-client-android:${project.ext.myFirebaseClientAndroidVersion}"
     compile "com.google.firebase:firebase-core:${project.ext.myFirebaseLibraryVersion}"
     compile "com.google.firebase:firebase-messaging:${project.ext.myFirebaseLibraryVersion}"
+    compile 'com.firebase:firebase-jobdispatcher:0.6.0'
     compile 'com.jakewharton.timber:timber:4.3.1'
     compile 'com.facebook.stetho:stetho:1.4.1'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'

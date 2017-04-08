@@ -21,7 +21,7 @@ allprojects {
     // Abstracted values for the purposes of consistency
     project.ext {
         myBuildToolsVersion = "25.0.1" //String
-        myMinSdkVersion = 15 //Integer
+        myMinSdkVersion = 21 //Integer
         myTargetSdkVersion = 25
         myCompileSdkVersion = 25
         myAndroidSupportLibraryVersion = "25.3.1"

@@ -30,14 +30,14 @@
                 android:authorities="@string/content_authority"
                 android:exported="false"
                 android:syncable="true"/>
-        <receiver
-                android:name=".broadcastreceiver.NetworkChangeReceiver"
-                android:label="NetworkChangeReceiver">
+
+        <service
+                android:exported="false"
+                android:name=".service.MyJobService">
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
             </intent-filter>
-        </receiver>
+        </service>
         <service
                 android:name=".service.OtxQueryService"
                 android:icon="@drawable/alienhead"
