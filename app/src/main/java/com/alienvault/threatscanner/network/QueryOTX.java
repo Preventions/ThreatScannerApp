@@ -9,8 +9,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 
 import com.alienvault.threatscanner.BuildConfig;
 import com.alienvault.threatscanner.R;
@@ -145,15 +146,17 @@ public class QueryOTX extends AsyncTask<String, Void, OTXResults> {
 
             // URL url = new URL(builtUri.toString()); hard-coding to a static URL for testing
 
+            // see https://medium.com/code-better/hiding-api-keys-from-your-android-repository-b23f5598b906
+            // see http://www.rainbowbreeze.it/environmental-variables-api-key-and-secret-buildconfig-and-android-studio/
             URL url = new URL("https://otx.alienvault.com:443/api/v1/indicators/IPv4/69.73.130.198/reputation");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
-            urlConnection.addRequestProperty("X-OTX-API-KEY", BuildConfig.OTX_API_KEY); // see http://www.rainbowbreeze.it/environmental-variables-api-key-and-secret-buildconfig-and-android-studio/ for reference
+            urlConnection.addRequestProperty("X-OTX-API-KEY", BuildConfig.OTX_API_KEY);
             urlConnection.connect();
 
             // Read the input stream into a String
             InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             if (inputStream == null) {
                 // Nothing to do.
                 Timber.v("inputStream == null");
@@ -166,7 +169,7 @@ public class QueryOTX extends AsyncTask<String, Void, OTXResults> {
                 // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
                 // But it does make debugging a *lot* easier if you print out the completed
                 // buffer for debugging.
-                buffer.append(line + "\n");
+                buffer.append(line).append("\n");
             }
 
             if (buffer.length() == 0) {

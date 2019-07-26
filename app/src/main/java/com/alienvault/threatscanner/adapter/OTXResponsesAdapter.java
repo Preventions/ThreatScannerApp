@@ -4,11 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alienvault.threatscanner.R;
 import com.alienvault.threatscanner.utility.Utility;
@@ -63,9 +64,9 @@ public class OTXResponsesAdapter extends RecyclerView.Adapter<OTXResponsesAdapte
 
         public OTXResponsesAdapterViewHolder(View itemView) {
             super(itemView);
-            mThreatScore = (TextView) itemView.findViewById(R.id.threat_score);
-            mIpAddress = (TextView) itemView.findViewById(R.id.ip_address);
-            mOtxResponse = (TextView) itemView.findViewById(R.id.otx_response);
+            mThreatScore = itemView.findViewById(R.id.threat_score);
+            mIpAddress = itemView.findViewById(R.id.ip_address);
+            mOtxResponse = itemView.findViewById(R.id.otx_response);
             itemView.setOnClickListener(this);
         }
 

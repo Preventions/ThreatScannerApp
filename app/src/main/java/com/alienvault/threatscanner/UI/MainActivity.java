@@ -1,22 +1,19 @@
 package com.alienvault.threatscanner.ui;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.iid.FirebaseInstanceId;
-
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alienvault.threatscanner.R;
 import com.alienvault.threatscanner.adapter.OTXResponsesAdapter;
@@ -31,6 +28,9 @@ import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.RetryStrategy;
 import com.firebase.jobdispatcher.Trigger;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import timber.log.Timber;
 
@@ -59,12 +59,12 @@ public class MainActivity extends AppCompatActivity {
 
         // consider adding intro screens to the app - https://medium.com/tangoagency/material-intro-screen-for-android-apps-c4317fbac923#.1zp72ni98
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         String token = FirebaseInstanceId.getInstance().getToken();
         Timber.v(token);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
 
         // TODO implement notification for user, so that the check doesn't have to be triggered via button click
         fab.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
             mCursor.moveToFirst();
         }
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview); // good reference here: https://github.com/codepath/android_guides/wiki/Using-the-RecyclerView
+        mRecyclerView = findViewById(R.id.recyclerview); // good reference here: https://github.com/codepath/android_guides/wiki/Using-the-RecyclerView
 
         // use this setting to improve performance if you know that changes in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);

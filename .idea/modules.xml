@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ThreatScanner.iml" filepath="$PROJECT_DIR$/ThreatScanner.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ThreatScannerApp.iml" filepath="$PROJECT_DIR$/ThreatScannerApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

@@ -9,7 +9,7 @@ android {
         targetSdkVersion project.ext.myTargetSdkVersion
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -28,25 +28,25 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile "com.android.support:appcompat-v7:${project.ext.myAndroidSupportLibraryVersion}"
-    compile "com.android.support:design:${project.ext.myAndroidSupportLibraryVersion}"
-    compile "com.android.support:support-v4:${project.ext.myAndroidSupportLibraryVersion}"
-    compile "com.android.support:support-annotations:${project.ext.myAndroidSupportLibraryVersion}"
-    compile "com.android.support:cardview-v7:${project.ext.myAndroidSupportLibraryVersion}"
-    compile "com.android.support:recyclerview-v7:${project.ext.myAndroidSupportLibraryVersion}"
-    compile "com.firebase:firebase-client-android:${project.ext.myFirebaseClientAndroidVersion}"
-    compile "com.google.firebase:firebase-core:${project.ext.myFirebaseLibraryVersion}"
-    compile "com.google.firebase:firebase-messaging:${project.ext.myFirebaseLibraryVersion}"
-    compile 'com.firebase:firebase-jobdispatcher:0.6.0'
-    compile 'com.jakewharton.timber:timber:4.3.1'
-    compile 'com.facebook.stetho:stetho:1.4.1'
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    testCompile 'junit:junit:4.12'
+    implementation "androidx.appcompat:appcompat:1.0.2"
+    implementation "com.google.android.material:material:1.0.0"
+    implementation "androidx.legacy:legacy-support-v4:1.0.0"
+    implementation "androidx.annotation:annotation:1.1.0"
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation "androidx.recyclerview:recyclerview:1.0.0"
+    implementation "com.firebase:firebase-client-android:${project.ext.myFirebaseClientAndroidVersion}"
+    implementation "com.google.firebase:firebase-core:17.0.1"
+    implementation "com.google.firebase:firebase-messaging:19.0.1"
+    implementation 'com.firebase:firebase-jobdispatcher:0.6.0'
+    implementation 'com.jakewharton.timber:timber:4.3.1'
+    implementation 'com.facebook.stetho:stetho:1.4.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    testImplementation 'junit:junit:4.12'
 }
 
 apply plugin: 'com.google.gms.google-services'

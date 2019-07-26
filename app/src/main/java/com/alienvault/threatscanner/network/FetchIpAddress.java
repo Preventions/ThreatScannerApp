@@ -2,9 +2,7 @@ package com.alienvault.threatscanner.network;
 
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
-import com.alienvault.threatscanner.application.ThreatScanner;
 import com.alienvault.threatscanner.model.IpAddress;
 
 import org.json.JSONException;
@@ -80,7 +78,7 @@ public class FetchIpAddress extends AsyncTask<Void, Void, IpAddress> {
                 // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
                 // But it does make debugging a *lot* easier if you print out the completed
                 // buffer for debugging.
-                buffer.append(line + "\n");
+                buffer.append(line).append("\n");
             }
 
             if (buffer.length() == 0) {
@@ -93,6 +91,7 @@ public class FetchIpAddress extends AsyncTask<Void, Void, IpAddress> {
 
         } catch (IOException e) {
             Timber.e("Error " + e);
+            assert urlConnection != null;
             Timber.e("Error " + urlConnection.getErrorStream());
             return null;
         } finally {
@@ -108,11 +107,7 @@ public class FetchIpAddress extends AsyncTask<Void, Void, IpAddress> {
             }
         }
         try {
-            if (ipAddressJsonStr != null) {
-                return getIpAddressFromJson(ipAddressJsonStr);
-            } else {
-                Toast.makeText(ThreatScanner.getAppContext(), "Could not retrieve IP address for device", Toast.LENGTH_SHORT).show();
-            }
+            return getIpAddressFromJson(ipAddressJsonStr);
         } catch (JSONException e) {
             Timber.e(e.getMessage() + e);
             e.printStackTrace();
@@ -131,7 +126,7 @@ public class FetchIpAddress extends AsyncTask<Void, Void, IpAddress> {
 
     private IpAddress getIpAddressFromJson(String ipAddressJsonStr) throws JSONException {
 
-        /**
+        /*
          * No + String: Having to concatenate a few Strings, + operator might do.
          * Never use it for a lot of String concatenations; the performance is really bad.
          * Prefer a StringBuilder instead.
